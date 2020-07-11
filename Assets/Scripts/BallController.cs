@@ -8,8 +8,9 @@ public class BallController : MonoBehaviour
     public GameObject ballPrefab;
     public CinemachineTargetGroup targetGroup;
     public int ballMax = 5;
-    public float interval = 1f;
+    public float interval = 3f;
     public float elapsedTime = 0f;
+    public GameObject lookAt;
 
     private GameObject[] balls;
     private int addIndex;
@@ -27,6 +28,7 @@ public class BallController : MonoBehaviour
     void Update()
     {
         CheckBalls();
+        UpdateLookAt();
     }
 
     void CheckBalls()
@@ -39,6 +41,22 @@ public class BallController : MonoBehaviour
         }
     }
 
+    void UpdateLookAt()
+    {
+        Vector3 pos = Vector3.zero;
+        if (balls.Length > 0)
+        {
+            foreach (GameObject obj in balls) {
+                if (obj != null)
+                {
+                    pos += obj.transform.position;
+                }
+            }
+            pos /= balls.Length;
+        }
+        lookAt.transform.position = (lookAt.transform.position * 9.0f + pos) / 10.0f;
+    }
+
     void AddBall()
     {
         if (IsNeedRemove()) {
@@ -46,7 +64,7 @@ public class BallController : MonoBehaviour
         }
 
         GameObject ball = Instantiate(ballPrefab) as GameObject;
-        ball.transform.position = new Vector3(Random.Range(-15, 15), Random.Range(15, 20), Random.Range(-15, 15));
+        ball.transform.position = new Vector3(Random.Range(-10, 10), Random.Range(15, 20), Random.Range(-10, 10));
         ball.GetComponent<MeshRenderer>().material.color = new Color(Random.value, Random.value, Random.value);
         targetGroup.AddMember(ball.transform, 1, 5);
         balls[addIndex] = ball;
